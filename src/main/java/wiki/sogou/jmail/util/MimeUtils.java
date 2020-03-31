@@ -1,5 +1,4 @@
-package wiki.sogou.jmail;
-
+package wiki.sogou.jmail.util;
 
 import javax.mail.MessagingException;
 import javax.mail.Part;
