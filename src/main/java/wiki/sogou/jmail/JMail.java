@@ -1,5 +1,7 @@
 package wiki.sogou.jmail;
 
+import wiki.sogou.jmail.builder.MimeMessageBuilder;
+
 /**
  * @author JimYip
  */
