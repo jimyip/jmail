@@ -1,8 +1,11 @@
-package wiki.sogou.jmail;
+package wiki.sogou.jmail.util;
 
 import java.util.Locale;
 import java.util.Map;
 
+/**
+ * @author JimYip
+ */
 public class StringUtils {
     public static String replaceVars(String s, Map<?, ?> varMap) {
         int i0 = 0;

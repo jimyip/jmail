@@ -1,7 +1,8 @@
-package wiki.sogou.jmail;
+package wiki.sogou.jmail.builder;
 
 
 import org.apache.commons.io.IOUtils;
+import wiki.sogou.jmail.util.MimeUtils;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -408,31 +409,17 @@ public class MimeMessageBuilder {
         MimeMessage message = new MimeMessage(getSession());
         try {
             message.setFrom(this.parseAddress(this.from));
-            message.setSender(this.sender == null ? null : this.parseAddress(this.sender));
-            message.setReplyTo(this.replyTo == null ? null : new Address[]{this.parseAddress(this.replyTo)});
+            if (this.sender != null) {
+                message.setSender(this.parseAddress(this.sender));
+            }
             addRecipients(message);
-            MimeUtils.setSubject(message, subject, charset);
             message.setSentDate(sendDate == null ? new Date() : sendDate);
             message.setFlags(this.flags, this.isSetFlag);
+            addSubject(message);
             setHeaders(message);
-
-            if (attachmentParts.size() == 0 && inlineParts.size() == 0) {
-                buildTextOnly(message);
-            } else {
-                MimeMultipart bodyPart = new MimeMultipart("mixed");
-                //for the body
-                bodyPart.addBodyPart(new MimeBodyPart());
-                for (MimeBodyPart part : this.attachmentParts) {
-                    bodyPart.addBodyPart(part);
-                }
-                if (bodyPart.getCount() > 1) {
-                    if (!buildText((MimePart) bodyPart.getBodyPart(0))) {
-                        bodyPart.removeBodyPart(0);
-                    }
-                    setContent(message, bodyPart);
-                } else {
-                    buildText(message);
-                }
+            addBody(message);
+            if (this.replyTo != null) {
+                message.setReplyTo(new Address[]{this.parseAddress(this.replyTo)});
             }
             message.saveChanges();
         } catch (MessagingException e) {
@@ -441,6 +428,33 @@ public class MimeMessageBuilder {
 
         return message;
 
+    }
+
+    private void addBody(MimeMessage message) throws MessagingException {
+        if (attachmentParts.size() == 0 && inlineParts.size() == 0) {
+            buildTextOnly(message);
+        } else {
+            MimeMultipart bodyPart = new MimeMultipart("mixed");
+            //for the body
+            bodyPart.addBodyPart(new MimeBodyPart());
+            for (MimeBodyPart part : this.attachmentParts) {
+                bodyPart.addBodyPart(part);
+            }
+            if (bodyPart.getCount() > 1) {
+                if (!buildText((MimePart) bodyPart.getBodyPart(0))) {
+                    bodyPart.removeBodyPart(0);
+                }
+                setContent(message, bodyPart);
+            } else {
+                buildText(message);
+            }
+        }
+    }
+
+    private void addSubject(MimeMessage message) throws MessagingException {
+        if (this.subject != null) {
+            MimeUtils.setSubject(message, this.subject, this.charset);
+        }
     }
 
     private void addRecipients(MimeMessage msg) throws MessagingException {
