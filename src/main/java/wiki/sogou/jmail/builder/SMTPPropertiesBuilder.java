@@ -2,9 +2,14 @@ package wiki.sogou.jmail.builder;
 
 /**
  * @author JimYip
+ * TODO 部分参数需要涵盖
  */
 public class SMTPPropertiesBuilder extends AbstractPropertiesBuilder {
 
+    public SMTPPropertiesBuilder clazz(String clazz) {
+        this.properties.put("mail.smtp.class", clazz);
+        return this;
+    }
 
     public SMTPPropertiesBuilder user(String user) {
         this.properties.put("mail.smtp.user", user);

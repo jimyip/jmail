@@ -2,9 +2,14 @@ package wiki.sogou.jmail.builder;
 
 /**
  * @author JimYip
+ * TODO 部分参数需要涵盖
  */
 public class POP3PropertiesBuilder extends AbstractPropertiesBuilder {
 
+    public POP3PropertiesBuilder clazz(String clazz) {
+        this.properties.put("mail.pop3.class", clazz);
+        return this;
+    }
 
     public POP3PropertiesBuilder user(String user) {
         this.properties.put("mail.pop3.user", user);

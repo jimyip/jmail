@@ -9,15 +9,21 @@ public class PropertiesBuilders {
     }
 
     public static POP3PropertiesBuilder POP3() {
-        return new POP3PropertiesBuilder();
+        POP3PropertiesBuilder pop3PropertiesBuilder = new POP3PropertiesBuilder();
+        pop3PropertiesBuilder.setProtocol("pop3");
+        return pop3PropertiesBuilder;
     }
 
     public static IMAPPropertiesBuilder IMAP() {
-        return new IMAPPropertiesBuilder();
+        IMAPPropertiesBuilder imapPropertiesBuilder = new IMAPPropertiesBuilder();
+        imapPropertiesBuilder.setProtocol("imap");
+        return imapPropertiesBuilder;
     }
 
     public static SMTPPropertiesBuilder SMTP() {
-        return new SMTPPropertiesBuilder();
+        SMTPPropertiesBuilder smtpPropertiesBuilder = new SMTPPropertiesBuilder();
+        smtpPropertiesBuilder.setProtocol("smtp");
+        return smtpPropertiesBuilder;
     }
 
 }

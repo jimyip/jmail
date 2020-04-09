@@ -4,7 +4,13 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * @author JimYip
+ */
 public class IOUtils {
+    private IOUtils() {
+    }
+
     public static void readFully(InputStream in, byte[] b) throws IOException {
         readFully(in, b, 0, b.length);
     }

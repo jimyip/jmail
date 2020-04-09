@@ -62,7 +62,7 @@ public class MimeMessageBuilder {
 
     private List<MimeBodyPart> attachmentParts = new ArrayList<>();
     private List<MimeBodyPart> inlineParts = new ArrayList<>();
-    private Flags flags = new Flags();
+    private Flags flags;
     private boolean isSetFlag = false;
     private String sender;
 
@@ -100,6 +100,9 @@ public class MimeMessageBuilder {
 
     public MimeMessageBuilder flag(Flags.Flag flag, boolean isSetFlag) {
         Objects.requireNonNull(flag, "flag");
+        if (this.flags == null) {
+            this.flags = new Flags();
+        }
         this.flags.add(flag);
         this.isSetFlag = isSetFlag;
         return this;
@@ -118,6 +121,7 @@ public class MimeMessageBuilder {
 
     @Deprecated
     public MimeMessageBuilder username(String username) {
+        Objects.requireNonNull(username, "username");
         this.properties.put("mail.smtp.from", username);
         this.properties.put("mail.smtp.auth", "true");
         return this;
@@ -131,6 +135,7 @@ public class MimeMessageBuilder {
 
     @Deprecated
     public MimeMessageBuilder host(String host) {
+        Objects.requireNonNull(host, "host");
         this.properties.put("mail.smtp.host", host);
         return this;
     }
@@ -155,6 +160,7 @@ public class MimeMessageBuilder {
 
     @Deprecated
     public MimeMessageBuilder protocol(String protocol) {
+        Objects.requireNonNull(protocol, "protocol");
         this.properties.put("mail.transport.protocol", protocol);
         return this;
     }
@@ -276,6 +282,7 @@ public class MimeMessageBuilder {
 
 
     public MimeMessageBuilder sendDate(Date sendDate) {
+        Objects.requireNonNull(sendDate, "sendDate");
         this.sendDate = sendDate;
         return this;
     }
@@ -363,11 +370,24 @@ public class MimeMessageBuilder {
 
     public MimeMessageBuilder addInline(String id, String fileName, File file) {
         Objects.requireNonNull(file, "file");
+        checkFileAccess(file);
         MimeBodyPart part = new MimeBodyPart();
         FileDataSource dataSource = getFileDataSource(fileName, file, part);
         prepareAttachPart(part, id, dataSource, true);
         this.inlineParts.add(part);
         return this;
+    }
+
+    private void checkFileAccess(File file) {
+        if (!file.exists()) {
+            throw new RuntimeException("file ``" + file.getAbsolutePath() + "`` doesn't exist");
+        }
+        if (!file.isFile()) {
+            throw new RuntimeException("file ``" + file.getAbsolutePath() + "`` isn't a normal file");
+        }
+        if (!file.canRead()) {
+            throw new RuntimeException("file ``" + file.getAbsolutePath() + "`` isn't readable");
+        }
     }
 
     public MimeMessageBuilder addHeader(String name, String value) {
@@ -411,9 +431,11 @@ public class MimeMessageBuilder {
 
     public MimeMessageBuilder addAttachment(String fileName, File file) {
         Objects.requireNonNull(file, "file");
+        checkFileAccess(file);
         MimeBodyPart part = new MimeBodyPart();
         FileDataSource dataSource = getFileDataSource(fileName, file, part);
         prepareAttachPart(part, null, dataSource, false);
+        this.attachmentParts.add(part);
         return this;
     }
 
@@ -443,7 +465,9 @@ public class MimeMessageBuilder {
             }
             addRecipients(message);
             message.setSentDate(sendDate == null ? new Date() : sendDate);
-            message.setFlags(this.flags, this.isSetFlag);
+            if (this.flags != null) {
+                message.setFlags(this.flags, this.isSetFlag);
+            }
             addSubject(message);
             setHeaders(message);
             addBody(message);

@@ -2,12 +2,17 @@ package wiki.sogou.jmail.builder;
 
 /**
  * @author JimYip
+ * TODO 部分参数需要涵盖
  */
 public class IMAPPropertiesBuilder extends AbstractPropertiesBuilder {
 
-
     public IMAPPropertiesBuilder user(String user) {
         this.properties.put("mail.imap.user", user);
+        return this;
+    }
+
+    public IMAPPropertiesBuilder clazz(String clazz) {
+        this.properties.put("mail.imap.class", clazz);
         return this;
     }
 

@@ -8,6 +8,7 @@ import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.MimeMessage;
+import java.io.File;
 import java.util.Properties;
 
 public class BuildersTest {
@@ -19,6 +20,7 @@ public class BuildersTest {
                 .user("admin@4chan.tv")
                 .port(25)
                 .build();
+        System.out.println(properties);
         Session session = Session.getDefaultInstance(properties, DefaultAuthenticator.of("aabb123456"));
 
 
@@ -27,30 +29,15 @@ public class BuildersTest {
                 .sender("admin@4chan.tv")
                 .from("admin@4chan.tv")
                 .to("admin@4chan.tv")
-                .cc("admin@4chan.tv")
-                .subject("hello1")
-                .text("plainText中文")
+                .subject("hello0409")
+                .html("plainText中文")
+                .addAttachment(new File("C:\\Users\\JimYip\\Desktop\\问题有百分号%《》&_&___$#@!)+)^_.doc.txt "))
                 .build();
-
-        MimeMessage message2 = JMail.builder()
-                .session(session)
-                .sender("admin@4chan.tv")
-                .from("admin@4chan.tv")
-                .to("admin@4chan.tv")
-                .cc("admin@4chan.tv")
-                .subject("hello2")
-                .text("plainText中文")
-                .build();
-
-        if (message.getSession() == message2.getSession()) {
-            System.out.println(true);
-        }
 
         Transport transport = session.getTransport();
         transport.connect();
         transport.sendMessage(message, message.getAllRecipients());
 
-        transport.sendMessage(message2, message.getAllRecipients());
 
 //        Transport.send(message, "admin@4chan.tv", "aabb123456");
 

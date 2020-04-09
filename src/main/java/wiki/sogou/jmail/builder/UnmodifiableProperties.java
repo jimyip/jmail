@@ -1,7 +1,16 @@
 package wiki.sogou.jmail.builder;
 
-import java.io.*;
-import java.util.*;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.Reader;
+import java.io.Writer;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -9,13 +18,8 @@ import java.util.function.Function;
 /**
  * @author JimYip
  */
-public class UnmodifiableProperties extends Properties {
+class UnmodifiableProperties extends Properties {
     private Properties properties;
-
-
-    public UnmodifiableProperties() {
-        super();
-    }
 
     @Override
     public synchronized int size() {
@@ -198,17 +202,17 @@ public class UnmodifiableProperties extends Properties {
     }
 
     @Override
-    public synchronized void loadFromXML(InputStream in) throws IOException {
+    public synchronized void loadFromXML(InputStream in) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void storeToXML(OutputStream os, String comment) throws IOException {
+    public void storeToXML(OutputStream os, String comment) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void storeToXML(OutputStream os, String comment, String encoding) throws IOException {
+    public void storeToXML(OutputStream os, String comment, String encoding) {
         throw new UnsupportedOperationException();
     }
 
