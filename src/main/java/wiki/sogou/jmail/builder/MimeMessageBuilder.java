@@ -8,14 +8,38 @@ import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
 import javax.activation.MimetypesFileTypeMap;
-import javax.mail.*;
-import javax.mail.internet.*;
+import javax.mail.Address;
+import javax.mail.Authenticator;
+import javax.mail.Flags;
+import javax.mail.Header;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Part;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.InternetHeaders;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+import javax.mail.internet.MimePart;
+import javax.mail.internet.MimeUtility;
 import javax.mail.util.ByteArrayDataSource;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Properties;
+import java.util.Set;
 import java.util.function.Function;
 
 /**
@@ -92,17 +116,20 @@ public class MimeMessageBuilder {
         return this;
     }
 
+    @Deprecated
     public MimeMessageBuilder username(String username) {
         this.properties.put("mail.smtp.from", username);
         this.properties.put("mail.smtp.auth", "true");
         return this;
     }
 
+    @Deprecated
     public MimeMessageBuilder port(int port) {
         this.properties.put("mail.smtp.port", port);
         return this;
     }
 
+    @Deprecated
     public MimeMessageBuilder host(String host) {
         this.properties.put("mail.smtp.host", host);
         return this;
@@ -126,7 +153,7 @@ public class MimeMessageBuilder {
         return this;
     }
 
-
+    @Deprecated
     public MimeMessageBuilder protocol(String protocol) {
         this.properties.put("mail.transport.protocol", protocol);
         return this;
@@ -296,12 +323,17 @@ public class MimeMessageBuilder {
     public MimeMessageBuilder addInline(String id, String name, byte[] bytes) {
         Objects.requireNonNull(bytes, "bytes");
         MimeBodyPart part = new MimeBodyPart();
-        String contentType = MimetypesFileTypeMap.getDefaultFileTypeMap().getContentType(name);
-        ByteArrayDataSource dataSource = new ByteArrayDataSource(bytes, contentType);
-        dataSource.setName(name);
+        ByteArrayDataSource dataSource = getByteArrayDataSource(name, bytes);
         prepareAttachPart(part, id, dataSource, true);
         this.inlineParts.add(part);
         return this;
+    }
+
+    private ByteArrayDataSource getByteArrayDataSource(String name, byte[] bytes) {
+        String contentType = MimetypesFileTypeMap.getDefaultFileTypeMap().getContentType(name);
+        ByteArrayDataSource dataSource = new ByteArrayDataSource(bytes, contentType);
+        dataSource.setName(name);
+        return dataSource;
     }
 
 
@@ -332,13 +364,7 @@ public class MimeMessageBuilder {
     public MimeMessageBuilder addInline(String id, String fileName, File file) {
         Objects.requireNonNull(file, "file");
         MimeBodyPart part = new MimeBodyPart();
-        FileDataSource dataSource = new FileDataSource(file);
-        try {
-            part.setFileName(null == fileName ?
-                    MimeUtility.encodeText(dataSource.getName()) : MimeUtility.encodeText(fileName));
-        } catch (MessagingException | UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
+        FileDataSource dataSource = getFileDataSource(fileName, file, part);
         prepareAttachPart(part, id, dataSource, true);
         this.inlineParts.add(part);
         return this;
@@ -362,9 +388,7 @@ public class MimeMessageBuilder {
     public MimeMessageBuilder addAttachment(String name, byte[] bytes) {
         Objects.requireNonNull(bytes, "bytes");
         MimeBodyPart part = new MimeBodyPart();
-        String contentType = MimetypesFileTypeMap.getDefaultFileTypeMap().getContentType(name);
-        ByteArrayDataSource dataSource = new ByteArrayDataSource(bytes, contentType);
-        dataSource.setName(name);
+        ByteArrayDataSource dataSource = getByteArrayDataSource(name, bytes);
         prepareAttachPart(part, null, dataSource, false);
         this.attachmentParts.add(part);
         return this;
@@ -388,6 +412,12 @@ public class MimeMessageBuilder {
     public MimeMessageBuilder addAttachment(String fileName, File file) {
         Objects.requireNonNull(file, "file");
         MimeBodyPart part = new MimeBodyPart();
+        FileDataSource dataSource = getFileDataSource(fileName, file, part);
+        prepareAttachPart(part, null, dataSource, false);
+        return this;
+    }
+
+    private FileDataSource getFileDataSource(String fileName, File file, MimeBodyPart part) {
         FileDataSource dataSource = new FileDataSource(file);
         try {
             part.setFileName(null == fileName ?
@@ -395,8 +425,7 @@ public class MimeMessageBuilder {
         } catch (MessagingException | UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
-        prepareAttachPart(part, null, dataSource, false);
-        return this;
+        return dataSource;
     }
 
 
@@ -509,7 +538,7 @@ public class MimeMessageBuilder {
 
     private Session getSession() {
         if (this.session == null) {
-            this.session = Session.getDefaultInstance(this.properties);
+            this.session = Session.getInstance(this.properties);
         }
         return session;
     }
