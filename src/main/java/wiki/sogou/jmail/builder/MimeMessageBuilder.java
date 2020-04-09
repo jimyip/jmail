@@ -528,7 +528,7 @@ public class MimeMessageBuilder {
 
     private void checkRecipients() {
         if (checkRecipients && this.toSet.isEmpty() && this.ccSet.isEmpty() && this.bccSet.isEmpty()) {
-            throw new IllegalStateException("Recipients is empty.");
+            throw new IllegalStateException("All recipients are empty.");
         }
     }
 
@@ -639,7 +639,7 @@ public class MimeMessageBuilder {
                 part.setContentID("<" + id + ">");
             }
         } catch (UnsupportedEncodingException e) {
-            throw new IllegalArgumentException("Illegal charset in string ``" + charset + "''", e);
+            throw new RuntimeException("Unsupported encoding in string ``" + charset + "``", e);
         } catch (Exception e) {
             throw new RuntimeException("Prepare attach part error.", e);
         }

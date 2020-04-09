@@ -5,11 +5,12 @@ import wiki.sogou.jmail.util.MimeUtils;
 
 import javax.activation.FileDataSource;
 import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.stream.Collectors;
 
@@ -21,12 +22,12 @@ public class MimeMessageBuilderTest {
         FileInputStream fis2 = new FileInputStream(file);
         String id = MimeUtils.generateContentId("admin@4chan.tv", "aa.pdf");
         MimeMessage message = JMail.builder()
-                .from("admin@4chan.tv")
-                .to("admin@4chan.tv")
-                .cc("admin@4chan.tv", "test@4chan.tv", "admin@4chan.tv", "test@sogou.wiki")
-                .bcc("叶沐 <zwye@sogou.wiki>")
-                .addBcc(InternetAddress.parse("叶镇武 <zwye@sogou.wiki>"))
-                .addBcc(new InternetAddress("zwye@4chan.tv", "叶镇武", "utf-8"))
+                .host("192.168.1.128")
+                .port(25)
+                .from("admin@wiki.sogou")
+                .to("test@4chan.tv")
+                .cc("test@4chan.tv")
+                .bcc("叶沐 <test@4chan.tv>")
                 .subject("hello")
                 .plainText("plainText中文")
                 .text("plainText中文")
@@ -40,7 +41,11 @@ public class MimeMessageBuilderTest {
                         .collect(Collectors.toSet()))
 //                .checkRecipients(true)
                 .build();
-        FileOutputStream fos = new FileOutputStream("C:\\Users\\JimYip\\Desktop\\stream\\test.eml");
-        message.writeTo(fos);
+
+        Transport transport = Session.getDefaultInstance(null).getTransport();
+        transport.sendMessage(message, null);
+
+        Transport.send(message, "admin@wiki.sogou", "aabb123456");
+
     }
 }
