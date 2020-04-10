@@ -1,6 +1,7 @@
 package wiki.sogou.jmail.builder;
 
 
+import wiki.sogou.jmail.DefaultAuthenticator;
 import wiki.sogou.jmail.exception.EmailException;
 import wiki.sogou.jmail.util.IOUtils;
 import wiki.sogou.jmail.util.MimeUtils;
@@ -10,13 +11,11 @@ import javax.activation.DataSource;
 import javax.activation.FileDataSource;
 import javax.activation.MimetypesFileTypeMap;
 import javax.mail.Address;
-import javax.mail.Authenticator;
 import javax.mail.Flags;
 import javax.mail.Header;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Part;
-import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
@@ -57,7 +56,7 @@ public class MimeMessageBuilder {
 
     private InternetHeaders headers = new InternetHeaders();
 
-    private Properties properties = new Properties();
+    private Properties properties;
     private Session session;
     private String charset;
 
@@ -123,6 +122,9 @@ public class MimeMessageBuilder {
     @Deprecated
     public MimeMessageBuilder username(String username) {
         Objects.requireNonNull(username, "username");
+        if (this.properties == null) {
+            this.properties = new Properties();
+        }
         this.properties.put("mail.smtp.from", username);
         this.properties.put("mail.smtp.auth", "true");
         return this;
@@ -130,12 +132,18 @@ public class MimeMessageBuilder {
 
     @Deprecated
     public MimeMessageBuilder port(int port) {
+        if (this.properties == null) {
+            this.properties = new Properties();
+        }
         this.properties.put("mail.smtp.port", port);
         return this;
     }
 
     @Deprecated
     public MimeMessageBuilder host(String host) {
+        if (this.properties == null) {
+            this.properties = new Properties();
+        }
         Objects.requireNonNull(host, "host");
         this.properties.put("mail.smtp.host", host);
         return this;
@@ -150,18 +158,16 @@ public class MimeMessageBuilder {
     public MimeMessageBuilder createSession(Properties properties, String username, String password) {
         Objects.requireNonNull(properties, "properties");
         this.properties = properties;
-        this.session = Session.getInstance(properties, new Authenticator() {
-            @Override
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(username, password);
-            }
-        });
+        this.session = Session.getInstance(properties, DefaultAuthenticator.of(username, password));
         return this;
     }
 
     @Deprecated
     public MimeMessageBuilder protocol(String protocol) {
         Objects.requireNonNull(protocol, "protocol");
+        if (this.properties == null) {
+            this.properties = new Properties();
+        }
         this.properties.put("mail.transport.protocol", protocol);
         return this;
     }
