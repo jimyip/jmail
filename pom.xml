@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.example</groupId>
+    <groupId>wiki.sogou</groupId>
     <artifactId>jmail</artifactId>
     <version>1.0-SNAPSHOT</version>
 
@@ -13,6 +13,7 @@
             <groupId>com.sun.mail</groupId>
             <artifactId>jakarta.mail</artifactId>
             <version>1.6.5</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -25,7 +26,7 @@
     </dependencies>
 
     <build>
-        <finalName>customProgram</finalName>
+        <finalName>jmail</finalName>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -38,22 +39,10 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.6.1</version>
                 <configuration>
+                    <skip>true</skip>
                     <source>1.8</source>
                     <target>1.8</target>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.1</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>

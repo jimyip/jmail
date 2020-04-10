@@ -9,21 +9,21 @@ public class PropertiesBuilders {
     }
 
     public static POP3PropertiesBuilder POP3() {
-        POP3PropertiesBuilder pop3PropertiesBuilder = new POP3PropertiesBuilder();
-        pop3PropertiesBuilder.setProtocol("pop3");
-        return pop3PropertiesBuilder;
+        POP3PropertiesBuilder builder = new POP3PropertiesBuilder();
+        builder.protocol("pop3").storeProtocol("pop3");
+        return builder;
     }
 
     public static IMAPPropertiesBuilder IMAP() {
-        IMAPPropertiesBuilder imapPropertiesBuilder = new IMAPPropertiesBuilder();
-        imapPropertiesBuilder.setProtocol("imap");
-        return imapPropertiesBuilder;
+        IMAPPropertiesBuilder builder = new IMAPPropertiesBuilder();
+        builder.protocol("imap").storeProtocol("imap");
+        return builder;
     }
 
     public static SMTPPropertiesBuilder SMTP() {
-        SMTPPropertiesBuilder smtpPropertiesBuilder = new SMTPPropertiesBuilder();
-        smtpPropertiesBuilder.setProtocol("smtp");
-        return smtpPropertiesBuilder;
+        SMTPPropertiesBuilder builder = new SMTPPropertiesBuilder();
+        builder.protocol("smtp").storeProtocol("smtp");
+        return builder;
     }
 
 }

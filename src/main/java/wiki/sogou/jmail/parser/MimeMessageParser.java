@@ -1,12 +1,37 @@
 package wiki.sogou.jmail.parser;
 
+import com.sun.mail.util.ReadableMime;
+
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
-import javax.mail.*;
-import javax.mail.internet.*;
+import javax.mail.Address;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.mail.Part;
+import javax.mail.internet.ContentType;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimePart;
+import javax.mail.internet.MimeUtility;
+import javax.mail.internet.ParseException;
 import javax.mail.util.ByteArrayDataSource;
-import java.io.*;
-import java.util.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * @author JimYip
@@ -113,6 +138,17 @@ public class MimeMessageParser {
                 }
             }
         }
+    }
+
+    public int getSize() throws MessagingException {
+        return this.mimeMessage.getSize();
+    }
+
+    public InputStream getMimeStream() throws MessagingException {
+        if (this.mimeMessage instanceof ReadableMime) {
+            return ((ReadableMime) this.mimeMessage).getMimeStream();
+        }
+        throw new UnsupportedOperationException("Not ReadableMime");
     }
 
     private String stripContentId(String contentId) {

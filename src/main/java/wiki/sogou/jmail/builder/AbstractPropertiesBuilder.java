@@ -45,8 +45,9 @@ public abstract class AbstractPropertiesBuilder {
     }
 
 
-    void setProtocol(String protocol) {
+    public AbstractPropertiesBuilder protocol(String protocol) {
         this.properties.put("mail.transport.protocol", protocol);
+        return this;
     }
 
 
