@@ -1,51 +1,39 @@
 package wiki.sogou.jmail;
 
 import org.junit.Test;
+import wiki.sogou.jmail.builder.PropertiesBuilders;
 import wiki.sogou.jmail.util.MimeUtils;
 
-import javax.activation.FileDataSource;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.stream.Collectors;
+import java.util.Properties;
 
 public class MimeMessageBuilderTest {
+//    String host = "127.0.0.1";
+    String host = "192.168.1.128";
+    int port = 25;
+
     @Test
-    public void test() throws IOException, MessagingException {
-        File file = new File("C:\\Users\\JimYip\\Desktop\\微信图片_20200314173215.jpg");
-        FileInputStream fis = new FileInputStream(file);
-        FileInputStream fis2 = new FileInputStream(file);
+    public void test() throws MessagingException {
         String id = MimeUtils.generateContentId("admin@4chan.tv", "aa.pdf");
         MimeMessage message = JMail.builder()
-                .host("192.168.1.128")
-                .port(25)
                 .from("admin@wiki.sogou")
-                .to("test@4chan.tv")
-                .cc("test@4chan.tv")
-                .bcc("叶沐 <test@4chan.tv>")
+                .to("admin@wiki.sogou")
                 .subject("hello")
-                .plainText("plainText中文")
                 .text("plainText中文")
-                .htmlText("<span class=\"spnEditorSign\">textHtml中文<img src=\"cid:" + id + "\" alt=\"\"><span style=\"font-family:SimSun;\"></span></span>")
-                .html("<span class=\"spnEditorSign\">textHtml中文<img src=\"cid:" + id + "\" alt=\"\"><span style=\"font-family:SimSun;\"></span></span>")
-                .addAttachment("微信图片_20200314173215.jpg", fis2)
-                .addAttachment(new FileDataSource(file))
-                .addInline(id, file.getName(), fis)
-                .recipientFilter(addresses -> addresses.stream()
-                        .filter(address -> !((InternetAddress) address).getAddress().contains("admin"))
-                        .collect(Collectors.toSet()))
-//                .checkRecipients(true)
+                .html("<span>textHtml中文</span>")
                 .build();
 
-        Transport transport = Session.getDefaultInstance(null).getTransport();
-        transport.sendMessage(message, null);
+        Properties props = PropertiesBuilders.SMTP()
+                .host(host)
+                .port(port)
+                .build();
 
-        Transport.send(message, "admin@wiki.sogou", "aabb123456");
-
+        Transport transport = Session.getDefaultInstance(props).getTransport();
+        transport.connect("admin@wiki.sogou", "aabb123456");
+        transport.sendMessage(message, message.getAllRecipients());
+        transport.close();
     }
 }
