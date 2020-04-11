@@ -454,7 +454,7 @@ public class MimeMessageBuilder {
                     MimeUtility.encodeText(dataSource.getName()) : MimeUtility.encodeText(fileName));
         } catch (MessagingException e) {
             throw new UncheckedMessagingException("Cannot set the file name.", e);
-        } catch (UnsupportedEncodingException e){
+        } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
         return dataSource;
@@ -572,7 +572,7 @@ public class MimeMessageBuilder {
 
     private Session getSession() {
         if (this.session == null) {
-            this.session = Session.getInstance(this.properties);
+            this.session = this.properties == null ? null : Session.getInstance(this.properties);
         }
         return session;
     }
