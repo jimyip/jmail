@@ -2,7 +2,7 @@ package wiki.sogou.jmail.builder;
 
 
 import wiki.sogou.jmail.DefaultAuthenticator;
-import wiki.sogou.jmail.exception.EmailException;
+import wiki.sogou.jmail.exception.UncheckedMessagingException;
 import wiki.sogou.jmail.util.IOUtils;
 import wiki.sogou.jmail.util.MimeUtils;
 
@@ -29,6 +29,7 @@ import javax.mail.util.ByteArrayDataSource;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -358,7 +359,7 @@ public class MimeMessageBuilder {
             IOUtils.readFully(inputStream, bytes);
             return addInline(id, name, bytes);
         } catch (IOException e) {
-            throw new EmailException("Cannot add inline.", e);
+            throw new UncheckedIOException("Cannot add inline.", e);
         }
     }
 
@@ -387,13 +388,13 @@ public class MimeMessageBuilder {
 
     private void checkFileAccess(File file) {
         if (!file.exists()) {
-            throw new EmailException("file ``" + file.getAbsolutePath() + "`` doesn't exist");
+            throw new UncheckedIOException("file ``" + file.getAbsolutePath() + "`` doesn't exist", new IOException());
         }
         if (!file.isFile()) {
-            throw new EmailException("file ``" + file.getAbsolutePath() + "`` isn't a normal file");
+            throw new UncheckedIOException("file ``" + file.getAbsolutePath() + "`` isn't a normal file", new IOException());
         }
         if (!file.canRead()) {
-            throw new EmailException("file ``" + file.getAbsolutePath() + "`` isn't readable");
+            throw new UncheckedIOException("file ``" + file.getAbsolutePath() + "`` isn't readable", new IOException());
         }
     }
 
@@ -428,7 +429,7 @@ public class MimeMessageBuilder {
             IOUtils.readFully(inputStream, bytes);
             return addAttachment(name, bytes);
         } catch (IOException e) {
-            throw new EmailException(e);
+            throw new UncheckedIOException(e);
         }
     }
 
@@ -451,8 +452,10 @@ public class MimeMessageBuilder {
         try {
             part.setFileName(null == fileName ?
                     MimeUtility.encodeText(dataSource.getName()) : MimeUtility.encodeText(fileName));
-        } catch (MessagingException | UnsupportedEncodingException e) {
-            throw new EmailException("Cannot set file name.", e);
+        } catch (MessagingException e) {
+            throw new UncheckedMessagingException("Cannot set the file name.", e);
+        } catch (UnsupportedEncodingException e){
+            throw new RuntimeException(e);
         }
         return dataSource;
     }
@@ -483,7 +486,7 @@ public class MimeMessageBuilder {
             }
             message.saveChanges();
         } catch (MessagingException e) {
-            throw new EmailException("Build error.", e);
+            throw new UncheckedMessagingException("Build error.", e);
         }
 
         return message;
@@ -646,9 +649,9 @@ public class MimeMessageBuilder {
                 part.setContentID("<" + id + ">");
             }
         } catch (UnsupportedEncodingException e) {
-            throw new EmailException("Unsupported encoding in string ``" + charset + "``", e);
-        } catch (Exception e) {
-            throw new EmailException("Prepare attach part error.", e);
+            throw new RuntimeException("Unsupported encoding in string ``" + charset + "``", e);
+        } catch (MessagingException e) {
+            throw new UncheckedMessagingException("Prepare attach part error.", e);
         }
     }
 

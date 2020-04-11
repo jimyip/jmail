@@ -23,20 +23,20 @@ public class BuildersTest {
         System.out.println(properties);
         Session session = Session.getDefaultInstance(properties, DefaultAuthenticator.of("aabb123456"));
 
-
+//        Transport transport = session.getTransport();
+//        transport.connect();
+//
         MimeMessage message = JMail.builder()
-                .session(session)
+//                .session(session)
                 .sender("admin@4chan.tv")
                 .from("admin@4chan.tv")
                 .to("admin@4chan.tv")
                 .subject("hello0409")
                 .html("plainText中文")
-                .addAttachment(new File("C:\\Users\\JimYip\\Desktop\\问题有百分号%《》&_&___$#@!)+)^_.doc.txt "))
                 .build();
+        System.out.println(message);
 
-        Transport transport = session.getTransport();
-        transport.connect();
-        transport.sendMessage(message, message.getAllRecipients());
+//        transport.sendMessage(message, message.getAllRecipients());
 
 
 //        Transport.send(message, "admin@4chan.tv", "aabb123456");
