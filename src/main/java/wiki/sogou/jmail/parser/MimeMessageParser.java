@@ -28,24 +28,26 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * @author JimYip
  */
 public class MimeMessageParser {
-    private MimeMessage mimeMessage;
+    private final MimeMessage mimeMessage;
 
     private String plainContent;
 
     private String htmlContent;
 
-    private List<DataSource> attachmentList;
+    private final List<DataSource> attachmentList;
 
-    private Map<String, DataSource> cidMap;
+    private final Map<String, DataSource> cidMap;
 
     private boolean isMultiPart;
 
@@ -65,47 +67,47 @@ public class MimeMessageParser {
         return this;
     }
 
-    public List<Address> getTo() throws Exception {
+    public Set<Address> getTo() throws Exception {
         Address[] recipients = this.mimeMessage.getRecipients(Message.RecipientType.TO);
-        return recipients != null ? Arrays.asList(recipients) : new ArrayList<>();
+        return recipients != null ? new LinkedHashSet<>(Arrays.asList(recipients)) : Collections.emptySet();
     }
 
-    public List<Address> getCc() throws Exception {
+    public Set<Address> getCc() throws Exception {
         Address[] recipients = this.mimeMessage.getRecipients(Message.RecipientType.CC);
-        return recipients != null ? Arrays.asList(recipients) : new ArrayList<>();
+        return recipients != null ? new LinkedHashSet<>(Arrays.asList(recipients)) : Collections.emptySet();
     }
 
-    public List<Address> getBcc() throws Exception {
+    public Set<Address> getBcc() throws Exception {
         Address[] recipients = this.mimeMessage.getRecipients(Message.RecipientType.BCC);
-        return recipients != null ? Arrays.asList(recipients) : new ArrayList<>();
+        return recipients != null ? new LinkedHashSet<>(Arrays.asList(recipients)) : Collections.emptySet();
     }
 
-    public String getFrom() throws Exception {
+    public Optional<String> getFrom() throws Exception {
         Address[] addresses = this.mimeMessage.getFrom();
         if (addresses == null || addresses.length == 0) {
-            return null;
+            return Optional.empty();
         }
-        return ((InternetAddress) addresses[0]).getAddress();
+        return Optional.ofNullable(((InternetAddress) addresses[0]).getAddress());
     }
 
-    public String getSender() throws Exception {
+    public Optional<String> getSender() throws Exception {
         Address addresses = this.mimeMessage.getSender();
         if (addresses == null) {
-            return null;
+            return Optional.empty();
         }
-        return ((InternetAddress) addresses).getAddress();
+        return Optional.ofNullable(((InternetAddress) addresses).getAddress());
     }
 
-    public String getReplyTo() throws Exception {
+    public Optional<String> getReplyTo() throws Exception {
         Address[] addresses = this.mimeMessage.getReplyTo();
         if (addresses == null || addresses.length == 0) {
-            return null;
+            return Optional.empty();
         }
-        return ((InternetAddress) addresses[0]).getAddress();
+        return Optional.ofNullable(((InternetAddress) addresses[0]).getAddress());
     }
 
-    public String getSubject() throws Exception {
-        return this.mimeMessage.getSubject();
+    public Optional<String> getSubject() throws Exception {
+        return Optional.ofNullable(this.mimeMessage.getSubject());
     }
 
     protected void parse(Multipart parent, MimePart part)
@@ -129,11 +131,9 @@ public class MimeMessageParser {
                         parse(mp, (MimeBodyPart) mp.getBodyPart(i));
                     }
                 } else {
-                    String cid = stripContentId(part.getContentID());
+                    Optional<String> cid = stripContentId(part.getContentID());
                     DataSource ds = createDataSource(parent, part);
-                    if (cid != null) {
-                        this.cidMap.put(cid, ds);
-                    }
+                    cid.ifPresent(cidValue -> this.cidMap.put(cidValue, ds));
                     this.attachmentList.add(ds);
                 }
             }
@@ -151,11 +151,11 @@ public class MimeMessageParser {
         throw new UnsupportedOperationException("Not ReadableMime");
     }
 
-    private String stripContentId(String contentId) {
+    private Optional<String> stripContentId(String contentId) {
         if (contentId == null) {
-            return null;
+            return Optional.empty();
         }
-        return contentId.trim().replaceAll("[<>]", "");
+        return Optional.of(contentId.trim().replaceAll("[<>]", ""));
     }
 
 
@@ -197,12 +197,12 @@ public class MimeMessageParser {
     }
 
 
-    public String getPlainContent() {
-        return this.plainContent;
+    public Optional<String> getPlainContent() {
+        return Optional.ofNullable(this.plainContent);
     }
 
-    public String getText() {
-        return this.plainContent;
+    public Optional<String> getText() {
+        return Optional.ofNullable(this.plainContent);
     }
 
 
@@ -216,12 +216,12 @@ public class MimeMessageParser {
     }
 
 
-    public String getHtmlContent() {
-        return this.htmlContent;
+    public Optional<String> getHtmlContent() {
+        return Optional.ofNullable(this.htmlContent);
     }
 
-    public String getHtml() {
-        return this.htmlContent;
+    public Optional<String> getHtml() {
+        return Optional.ofNullable(this.htmlContent);
     }
 
 
