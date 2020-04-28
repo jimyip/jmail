@@ -38,7 +38,6 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 import java.util.function.Function;
@@ -94,13 +93,11 @@ public class MimeMessageBuilder {
     }
 
     public MimeMessageBuilder sender(String sender) {
-        Objects.requireNonNull(sender, "sender");
         this.sender = sender;
         return this;
     }
 
     public MimeMessageBuilder flag(Flags.Flag flag, boolean isSetFlag) {
-        Objects.requireNonNull(flag, "flag");
         if (this.flags == null) {
             this.flags = new Flags();
         }
@@ -110,7 +107,6 @@ public class MimeMessageBuilder {
     }
 
     public MimeMessageBuilder flags(Flags flags) {
-        Objects.requireNonNull(flags, "flags");
         this.flags = flags;
         return this;
     }
@@ -122,7 +118,6 @@ public class MimeMessageBuilder {
 
     @Deprecated
     public MimeMessageBuilder username(String username) {
-        Objects.requireNonNull(username, "username");
         if (this.properties == null) {
             this.properties = new Properties();
         }
@@ -145,19 +140,17 @@ public class MimeMessageBuilder {
         if (this.properties == null) {
             this.properties = new Properties();
         }
-        Objects.requireNonNull(host, "host");
+
         this.properties.put("mail.smtp.host", host);
         return this;
     }
 
     public MimeMessageBuilder properties(Properties properties) {
-        Objects.requireNonNull(properties, "properties");
         this.properties = properties;
         return this;
     }
 
     public MimeMessageBuilder createSession(Properties properties, String username, String password) {
-        Objects.requireNonNull(properties, "properties");
         this.properties = properties;
         this.session = Session.getInstance(properties, DefaultAuthenticator.of(username, password));
         return this;
@@ -165,7 +158,6 @@ public class MimeMessageBuilder {
 
     @Deprecated
     public MimeMessageBuilder protocol(String protocol) {
-        Objects.requireNonNull(protocol, "protocol");
         if (this.properties == null) {
             this.properties = new Properties();
         }
@@ -175,20 +167,17 @@ public class MimeMessageBuilder {
 
 
     public MimeMessageBuilder from(String from) {
-        Objects.requireNonNull(from, "from");
         this.from = from;
         return this;
     }
 
 
     public MimeMessageBuilder replyTo(String replyTo) {
-        Objects.requireNonNull(replyTo, "replyTo");
         this.replyTo = replyTo;
         return this;
     }
 
     public MimeMessageBuilder to(String... to) {
-        Objects.requireNonNull(to, "to");
         if (this.toSet.size() != 0) {
             this.toSet.clear();
         }
@@ -196,7 +185,6 @@ public class MimeMessageBuilder {
     }
 
     public MimeMessageBuilder to(Address... to) {
-        Objects.requireNonNull(to, "to");
         if (this.toSet.size() != 0) {
             this.toSet.clear();
         }
@@ -205,25 +193,21 @@ public class MimeMessageBuilder {
     }
 
     public MimeMessageBuilder to(Set<Address> toSet) {
-        Objects.requireNonNull(toSet, "toSet");
         this.toSet = toSet;
         return this;
     }
 
     public MimeMessageBuilder addTo(String... to) {
-        Objects.requireNonNull(to, "to");
         parseAddress(Message.RecipientType.TO, this.toSet, to);
         return this;
     }
 
     public MimeMessageBuilder addTo(Address... to) {
-        Objects.requireNonNull(to, "to");
         this.toSet.addAll(Arrays.asList(to));
         return this;
     }
 
     public MimeMessageBuilder cc(String... cc) {
-        Objects.requireNonNull(cc, "cc");
         if (this.ccSet.size() != 0) {
             this.ccSet.clear();
         }
@@ -232,14 +216,12 @@ public class MimeMessageBuilder {
     }
 
     public MimeMessageBuilder cc(Set<Address> ccSet) {
-        Objects.requireNonNull(ccSet, "ccSet");
         this.ccSet = ccSet;
         return this;
     }
 
 
     public MimeMessageBuilder bcc(String... bcc) {
-        Objects.requireNonNull(bcc, "bcc");
         if (this.bccSet.size() != 0) {
             this.bccSet.clear();
         }
@@ -248,7 +230,6 @@ public class MimeMessageBuilder {
     }
 
     public MimeMessageBuilder bcc(Address... bcc) {
-        Objects.requireNonNull(bcc, "bcc");
         if (this.bccSet.size() != 0) {
             this.bccSet.clear();
         }
@@ -257,40 +238,34 @@ public class MimeMessageBuilder {
     }
 
     public MimeMessageBuilder bcc(Set<Address> bccSet) {
-        Objects.requireNonNull(bccSet, "bccSet");
         this.bccSet = bccSet;
         return this;
     }
 
     public MimeMessageBuilder addCc(String... cc) {
-        Objects.requireNonNull(cc, "cc");
         parseAddress(Message.RecipientType.CC, this.ccSet, cc);
         return this;
     }
 
     public MimeMessageBuilder addCc(Address... cc) {
-        Objects.requireNonNull(cc, "cc");
         this.ccSet.addAll(Arrays.asList(cc));
         return this;
     }
 
 
     public MimeMessageBuilder addBcc(String... bcc) {
-        Objects.requireNonNull(bcc, "bcc");
         parseAddress(Message.RecipientType.BCC, this.bccSet, bcc);
         return this;
     }
 
 
     public MimeMessageBuilder addBcc(Address... bcc) {
-        Objects.requireNonNull(bcc, "bcc");
         this.bccSet.addAll(Arrays.asList(bcc));
         return this;
     }
 
 
     public MimeMessageBuilder sendDate(Date sendDate) {
-        Objects.requireNonNull(sendDate, "sendDate");
         this.sendDate = sendDate;
         return this;
     }
@@ -307,13 +282,11 @@ public class MimeMessageBuilder {
     }
 
     public MimeMessageBuilder html(String html) {
-        Objects.requireNonNull(html, "html");
         this.htmlText = html;
         return this;
     }
 
     public MimeMessageBuilder text(String text) {
-        Objects.requireNonNull(text, "text");
         this.plainText = text;
         return this;
     }
@@ -336,7 +309,6 @@ public class MimeMessageBuilder {
     }
 
     public MimeMessageBuilder addInline(String id, String name, byte[] bytes) {
-        Objects.requireNonNull(bytes, "bytes");
         MimeBodyPart part = new MimeBodyPart();
         ByteArrayDataSource dataSource = getByteArrayDataSource(name, bytes);
         prepareAttachPart(part, id, dataSource, true);
@@ -353,7 +325,6 @@ public class MimeMessageBuilder {
 
 
     public MimeMessageBuilder addInline(String id, String name, InputStream inputStream) {
-        Objects.requireNonNull(inputStream, "inputStream");
         try {
             byte[] bytes = new byte[inputStream.available()];
             IOUtils.readFully(inputStream, bytes);
@@ -364,7 +335,6 @@ public class MimeMessageBuilder {
     }
 
     public MimeMessageBuilder addInline(String id, DataSource dataSource) {
-        Objects.requireNonNull(dataSource, "dataSource");
         MimeBodyPart part = new MimeBodyPart();
         prepareAttachPart(part, id, dataSource, true);
         this.inlineParts.add(part);
@@ -372,12 +342,10 @@ public class MimeMessageBuilder {
     }
 
     public MimeMessageBuilder addInline(String id, File file) {
-        Objects.requireNonNull(file, "file");
         return addInline(id, null, file);
     }
 
     public MimeMessageBuilder addInline(String id, String fileName, File file) {
-        Objects.requireNonNull(file, "file");
         checkFileAccess(file);
         MimeBodyPart part = new MimeBodyPart();
         FileDataSource dataSource = getFileDataSource(fileName, file, part);
@@ -414,7 +382,6 @@ public class MimeMessageBuilder {
     }
 
     public MimeMessageBuilder addAttachment(String name, byte[] bytes) {
-        Objects.requireNonNull(bytes, "bytes");
         MimeBodyPart part = new MimeBodyPart();
         ByteArrayDataSource dataSource = getByteArrayDataSource(name, bytes);
         prepareAttachPart(part, null, dataSource, false);
@@ -423,7 +390,6 @@ public class MimeMessageBuilder {
     }
 
     public MimeMessageBuilder addAttachment(String name, InputStream inputStream) {
-        Objects.requireNonNull(inputStream, "inputStream");
         try {
             byte[] bytes = new byte[inputStream.available()];
             IOUtils.readFully(inputStream, bytes);
@@ -438,7 +404,6 @@ public class MimeMessageBuilder {
     }
 
     public MimeMessageBuilder addAttachment(String fileName, File file) {
-        Objects.requireNonNull(file, "file");
         checkFileAccess(file);
         MimeBodyPart part = new MimeBodyPart();
         FileDataSource dataSource = getFileDataSource(fileName, file, part);
@@ -465,7 +430,6 @@ public class MimeMessageBuilder {
      * build an email
      */
     public MimeMessage build() {
-        Objects.requireNonNull(this.from, "from");
         checkRecipients();
         MimeMessage message = new MimeMessage(getSession());
         try {
