@@ -38,9 +38,11 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * @author JimYip
@@ -194,6 +196,24 @@ public class MimeMessageBuilder {
 
     public MimeMessageBuilder to(Set<Address> toSet) {
         this.toSet = toSet;
+        return this;
+    }
+
+    public MimeMessageBuilder addTo(Supplier<List<Address>> supplier) {
+        Objects.requireNonNull(supplier, "supplier");
+        this.toSet.addAll(supplier.get());
+        return this;
+    }
+
+    public MimeMessageBuilder addCc(Supplier<List<Address>> supplier) {
+        Objects.requireNonNull(supplier, "supplier");
+        this.ccSet.addAll(supplier.get());
+        return this;
+    }
+
+    public MimeMessageBuilder addBcc(Supplier<List<Address>> supplier) {
+        Objects.requireNonNull(supplier, "supplier");
+        this.bccSet.addAll(supplier.get());
         return this;
     }
 
