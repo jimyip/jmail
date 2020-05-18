@@ -1,6 +1,7 @@
 package wiki.sogou.jmail.parser;
 
 import com.sun.mail.util.ReadableMime;
+import wiki.sogou.jmail.builder.MimeMessageBuilder;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -51,8 +52,10 @@ public class MimeMessageParser {
 
     private boolean isMultiPart;
 
-    public static MimeMessageParser of(MimeMessage message) {
-        return new MimeMessageParser(message);
+    public static MimeMessageParser of(MimeMessage message) throws Exception {
+        MimeMessageParser parser = new MimeMessageParser(message);
+        parser.parse(null, message);
+        return parser;
     }
 
     private MimeMessageParser(MimeMessage message) {
@@ -60,11 +63,6 @@ public class MimeMessageParser {
         this.cidMap = new LinkedHashMap<>();
         this.mimeMessage = message;
         this.isMultiPart = false;
-    }
-
-    public MimeMessageParser parse() throws Exception {
-        this.parse(null, this.mimeMessage);
-        return this;
     }
 
     public Set<Address> getTo() throws Exception {

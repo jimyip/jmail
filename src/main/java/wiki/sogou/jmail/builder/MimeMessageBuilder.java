@@ -71,11 +71,16 @@ public class MimeMessageBuilder {
     private String htmlText;
     private String plainText;
     private boolean checkRecipients;
+    private MimeMessage mimeMessage;
 
     private Function<Set<Address>, Set<Address>> recipientFilter;
 
     public MimeMessageBuilder() {
 
+    }
+
+    public MimeMessageBuilder(MimeMessage mimeMessage) {
+        this.mimeMessage = mimeMessage;
     }
 
     public MimeMessageBuilder(Session session) {
@@ -465,9 +470,8 @@ public class MimeMessageBuilder {
      * build an email
      */
     public MimeMessage build() {
-        Objects.requireNonNull(this.from, "from");
         checkRecipients();
-        MimeMessage message = new MimeMessage(getSession());
+        MimeMessage message = this.mimeMessage == null ? new MimeMessage(getSession()) : this.mimeMessage;
         try {
             message.setFrom(this.parseAddress(this.from));
             if (this.sender != null) {
