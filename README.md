@@ -1,28 +1,28 @@
 ### How to use
 
-1. 构建一封简单的邮件。
+1. To build a simple email.
 
 ```java
 MimeMessage message = JMail.builder()
         .from("text@sogou.wiki")
         .to("text2@sogou.wiki")
         .subject("Hello world!")
-        .text("你好，世界！")
+        .text("Hello world!")
         .build();
 ```
 
-2. 构建一封 html 的邮件。
+2. To build a HTML email.
 
 ```java
 MimeMessage message = JMail.builder()
         .from("text@sogou.wiki")
         .to("text2@sogou.wiki")
         .subject("Hello world!")
-        .html("<span style=\"color:#E53333;\">你好，世界！</span>")
+        .html("<span style=\"color:#E53333;\">Hello world!</span>")
         .build();
 ```
 
-3. 构建一封内联邮件（图片嵌入）。
+3. To build a email with Inline（picture inline）。
 
 ```java
 String cid = "123456";
@@ -30,26 +30,26 @@ MimeMessage message = JMail.builder()
         .from("text@sogou.wiki")
         .to("text2@sogou.wiki")
         .subject("Hello world!")
-        .text("你好，世界！")
-        .html("<span style=\"color:#E53333;\">你好，世界！</span><img src=\"cid:" + cid + "\" alt=\"\" />")
-        .addInline(cid, new File("D:\\hello你好.jpg"))
+        .text("Hello world!！")
+        .html("<span style=\"color:#E53333;\">Hello world!</span><img src=\"cid:" + cid + "\" alt=\"\" />")
+        .addInline(cid, new File("../jmail/picture.jpg"))
         .build();
 ```
 
-4. 添加带有附件的邮件。
+4. To build an email with attachment.
 
 ```java
 MimeMessage message = JMail.builder()
         .from("text@sogou.wiki")
         .to("text2@sogou.wiki")
         .subject("Hello world!")
-        .text("你好，世界！")
-        .html("<span style=\"color:#E53333;\">你好，世界！</span>")
-        .addAttachment(new File("D:\\hello你好.txt"))
+        .text("Hello world!")
+        .html("<span style=\"color:#E53333;\">Hello world!</span>")
+        .addAttachment(new File("../jmail/test.txt"))
         .build();
 ```
 
-5. 创建既有内联图片，又有附件的邮件
+5. To build an email with inline picture and attachment.
 
 ```java
 String cid = "123456";
@@ -57,10 +57,10 @@ MimeMessage message = JMail.builder()
         .from("text@sogou.wiki")
         .to("text2@sogou.wiki")
         .subject("Hello world!")
-        .text("你好，世界！")
-        .html("<span style=\"color:#E53333;\">你好，世界！</span><img src=\"cid:" + cid + "\" alt=\"\" />")
-        .addInline(cid, new File("D:\\hello你好.jpg"))
-        .addAttachment(new File("D:\\hello你好.txt"))
+        .text("Hello world!")
+        .html("<span style=\"color:#E53333;\">Hello world!</span><img src=\"cid:" + cid + "\" alt=\"\" />")
+        .addInline(cid, new File("../jmail/picture.jpg"))
+        .addAttachment(new File("../jmail/test.txt"))
         .build();
 ```
 
