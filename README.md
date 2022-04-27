@@ -11,7 +11,7 @@ MimeMessage message = JMail.builder()
         .build();
 ```
 
-2. To build a HTML email.
+2. To build an HTML email.
 
 ```java
 MimeMessage message = JMail.builder()
@@ -22,7 +22,7 @@ MimeMessage message = JMail.builder()
         .build();
 ```
 
-3. To build a email with Inline（picture inline）。
+3. To build an email with Inline（picture inline）。
 
 ```java
 String cid = "123456";
