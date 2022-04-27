@@ -58,7 +58,7 @@ public class IMAPTest {
 
     private void parseMessage(MimeMessage msg) {
         try {
-            MimeMessageParser parser = MimeMessageParser.of(msg).parse();
+            MimeMessageParser parser = MimeMessageParser.of(msg);
             System.out.println(parser.getTo());
             System.out.println(parser.getSize());
             System.out.println(parser.getHtml());

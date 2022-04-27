@@ -23,10 +23,10 @@ public class MimeMessageParserTest {
                 .to("admin@4chan.tv")
                 .subject("hello0409")
                 .html("plainText中文")
-                .addAttachment(new File("C:\\Users\\JimYip\\Desktop\\微信图片_20200314175443.jpg"))
+                .addAttachment(new File("../jmail/picture.jpg"))
                 .build();
-        MimeMessageParser parser = MimeMessageParser.of(message).parse();
-        Optional<DataSource> attachment = parser.findAttachmentByName("微信图片_20200314175443.jpg");
+        MimeMessageParser parser = MimeMessageParser.of(message);
+        Optional<DataSource> attachment = parser.findAttachmentByName("picture.jpg");
 
         System.out.println(attachment);
     }

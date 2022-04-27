@@ -11,13 +11,17 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.stream.Collectors;
 
 public class MimeMessageBuilderTest {
     @Test
     public void test() throws IOException, MessagingException {
-        File file = new File("C:\\Users\\JimYip\\Desktop\\微信图片_20200314173215.jpg");
+        File file = new File("../jmail/picture.jpg");
+        if (!file.exists()) {
+            throw new FileNotFoundException();
+        }
         FileInputStream fis = new FileInputStream(file);
         FileInputStream fis2 = new FileInputStream(file);
         String id = MimeUtils.generateContentId("admin@4chan.tv", "aa.pdf");
@@ -33,7 +37,7 @@ public class MimeMessageBuilderTest {
                 .text("plainText中文")
                 .htmlText("<span class=\"spnEditorSign\">textHtml中文<img src=\"cid:" + id + "\" alt=\"\"><span style=\"font-family:SimSun;\"></span></span>")
                 .html("<span class=\"spnEditorSign\">textHtml中文<img src=\"cid:" + id + "\" alt=\"\"><span style=\"font-family:SimSun;\"></span></span>")
-                .addAttachment("微信图片_20200314173215.jpg", fis2)
+                .addAttachment("picture.jpg", fis2)
                 .addAttachment(new FileDataSource(file))
                 .addInline(id, file.getName(), fis)
                 .recipientFilter(addresses -> addresses.stream()
